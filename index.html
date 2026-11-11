@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BIZNISKING Laundry & Ironing Service Prototype</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <link rel="stylesheet" href="tailwind.css" />
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="fa.css" />
+
+  
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(20, 184, 166, 0.4);
+      border-radius: 9999px;
+    }
+    /* Hide scrollbar for tabs */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Touch action optimization */
+    button, input, select, textarea {
+      touch-action: manipulation;
+    }
+  </style>
+<style>
+/* Native Android app overrides */
+header{display:none!important}
+body{padding:0!important;display:block!important;min-height:100dvh}
+nav{max-width:none!important;margin:0!important;border-radius:0!important;padding:4px!important;padding-top:calc(env(safe-area-inset-top,0px) + 4px)!important}
+#deviceWrapper{max-width:none!important;padding:0!important}
+#phoneBezel{padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;--tw-ring-shadow:0 0 #0000!important}
+#appViewport{height:calc(100dvh - 52px - env(safe-area-inset-top,0px))!important;border-radius:0!important}
+#statusBar{display:none!important}
+</style>
+</head>
+<body class="bg-slate-900 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-start p-2 sm:p-4 select-none">
+
+  <!-- TOP GLOBAL CONTROLS & ROLE SWITCHER -->
+  <header class="w-full max-w-4xl mb-3 flex flex-wrap items-center justify-between gap-2 px-2 text-white">
+    <div class="flex items-center space-x-2">
+      <div class="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center font-bold text-white shadow-lg shadow-teal-500/30">
+        <i class="fa-solid fa-shirt"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-base sm:text-lg tracking-wide flex items-center gap-1">
+          BIZNISKING <span class="text-teal-400 font-light text-xs sm:text-sm">Laundry & Ironing</span>
+        </h1>
+        <p class="text-[10px] sm:text-xs text-slate-400">Interactive Android System Prototype (21-Day Scope)</p>
+      </div>
+    </div>
+
+    <!-- Frame Display Options & APK Download CTA -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleDeviceFrame()" id="frameToggleBtn" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-mobile-screen"></i>
+        <span id="frameToggleText">Full Screen</span>
+      </button>
+
+      <button onclick="openApkModal()" class="px-3 py-1.5 text-xs bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-md flex items-center gap-1.5 transition">
+        <i class="fa-brands fa-android text-sm"></i>
+        <span>Get APK / PWA</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ROLE SWITCHER TABS -->
+  <nav class="w-full max-w-4xl bg-slate-800/90 backdrop-blur p-1.5 rounded-2xl border border-slate-700/80 mb-4 shadow-xl flex items-center justify-between overflow-x-auto no-scrollbar gap-1">
+    <button onclick="switchRole('customer')" id="roleBtn-customer" class="role-tab flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition bg-teal-500 text-white shadow-md">
+      <i class="fa-solid fa-user"></i>
+      <span>Customer App</span>
+    </button>
+    <button onclick="switchRole('delivery')" id="roleBtn-delivery" class="role-tab flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition text-slate-300 hover:bg-slate-700/50">
+      <i class="fa-solid fa-truck"></i>
+      <span>Delivery Partner</span>
+    </button>
+    <button onclick="switchRole('laundry')" id="roleBtn-laundry" class="role-tab flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition text-slate-300 hover:bg-slate-700/50">
+      <i class="fa-solid fa-jug-detergent"></i>
+      <span>Laundry Ops</span>
+    </button>
+    <button onclick="switchRole('admin')" id="roleBtn-admin" class="role-tab flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition text-slate-300 hover:bg-slate-700/50">
+      <i class="fa-solid fa-chart-pie"></i>
+      <span>Web Admin</span>
+    </button>
+  </nav>
+
+  <!-- DEVICE CONTAINER / WRAPPER -->
+  <main id="deviceWrapper" class="transition-all duration-300 w-full max-w-[420px] pb-6 flex justify-center">
+    
+    <!-- SMARTPHONE CHASSIS -->
+    <div id="phoneBezel" class="w-full bg-slate-950 p-2 sm:p-3 rounded-[44px] shadow-2xl border-[4px] border-slate-800 ring-1 ring-slate-700/50 relative">
+      
+      <!-- Screen Area -->
+      <div id="appViewport" class="bg-slate-50 w-full h-[760px] rounded-[36px] overflow-hidden flex flex-col relative shadow-inner text-slate-800">
+
+        <!-- ANDROID STATUS BAR -->
+        <div id="statusBar" class="w-full bg-slate-900 text-white px-6 py-2 flex items-center justify-between text-[11px] font-medium z-30 select-none">
+          <span id="androidClock">13:36</span>
+          <!-- Camera Hole Punch -->
+          <div class="w-3.5 h-3.5 rounded-full bg-black border border-slate-800 shadow-inner flex items-center justify-center">
+            <div class="w-1 h-1 rounded-full bg-blue-900/60"></div>
+          </div>
+          <div class="flex items-center space-x-1.5 text-xs text-slate-300">
+            <span class="text-[9px] font-bold text-teal-400">5G</span>
+            <i class="fa-solid fa-wifi text-[10px]"></i>
+            <i class="fa-solid fa-battery-full text-xs text-emerald-400"></i>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ROLE 1: CUSTOMER APPLICATION -->
+        <!-- ============================================== -->
+        <div id="role-customer-container" class="role-screen flex-1 flex flex-col overflow-hidden relative">
+          
+          <!-- Customer Screen Content Area -->
+          <div id="customer-viewport" class="flex-1 overflow-y-auto no-scrollbar pb-16">
+            
+            <!-- VIEW: CUSTOMER AUTH (OTP) -->
+            <section id="custView-auth" class="hidden min-h-full p-6 flex flex-col justify-center bg-gradient-to-b from-slate-900 via-slate-800 to-teal-950 text-white">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto bg-teal-500/20 border border-teal-400/30 rounded-2xl flex items-center justify-center text-teal-400 text-3xl mb-3 shadow-lg">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Welcome Back</h2>
+                <p class="text-xs text-slate-300 mt-1">Enter registered email for One-Time Password verification</p>
+              </div>
+
+              <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 shadow-xl space-y-4">
+                <div id="authEmailStep">
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                  <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-3 top-3 text-slate-400 text-sm"></i>
+                    <input type="email" id="authEmailInput" value="sarah.jenkins@example.com" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 pl-9 pr-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-teal-400" />
+                  </div>
+                  <button onclick="sendCustomerOTP()" class="w-full mt-4 bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow-lg shadow-teal-500/30 flex items-center justify-center gap-2">
+                    <span>Send Verification Code</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                  </button>
+                </div>
+
+                <div id="authOtpStep" class="hidden">
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="text-xs font-semibold text-slate-300">Enter 4-Digit OTP</label>
+                    <span class="text-[10px] text-teal-400 bg-teal-950/60 px-2 py-0.5 rounded border border-teal-800">Demo Code: <strong>5542</strong></span>
+                  </div>
+                  <div class="flex justify-between gap-2 mb-4">
+                    <input type="text" maxlength="1" value="5" class="otp-box w-12 h-12 text-center text-lg font-bold bg-slate-800 border border-slate-600 rounded-xl focus:border-teal-400 text-white" />
+                    <input type="text" maxlength="1" value="5" class="otp-box w-12 h-12 text-center text-lg font-bold bg-slate-800 border border-slate-600 rounded-xl focus:border-teal-400 text-white" />
+                    <input type="text" maxlength="1" value="4" class="otp-box w-12 h-12 text-center text-lg font-bold bg-slate-800 border border-slate-600 rounded-xl focus:border-teal-400 text-white" />
+                    <input type="text" maxlength="1" value="2" class="otp-box w-12 h-12 text-center text-lg font-bold bg-slate-800 border border-slate-600 rounded-xl focus:border-teal-400 text-white" />
+                  </div>
+                  <button onclick="verifyCustomerOTP()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/30">
+                    Verify & Access Dashboard
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW: CUSTOMER DASHBOARD (HOME) -->
+            <section id="custView-home" class="p-4 space-y-4">
+              <!-- Header Profile & Wallet Snippet -->
+              <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-3xl shadow-lg border border-slate-700/60 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-teal-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-11 h-11 rounded-2xl bg-teal-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                      SJ
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <h3 class="font-bold text-sm text-white" id="custUserName">Sarah Jenkins</h3>
+                        <span id="custPlanBadge" class="text-[9px] bg-amber-400 text-amber-950 font-extrabold px-1.5 py-0.5 rounded-md">PREMIUM</span>
+                      </div>
+                      <p class="text-[11px] text-slate-300 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-teal-400 text-[10px]"></i>
+                        <span>Zone A: Central (Mon/Thu)</span>
+                      </p>
+                    </div>
+                  </div>
+                  <button onclick="openCustomerTab('wallet')" class="text-right bg-slate-800/80 hover:bg-slate-700/80 px-2.5 py-1.5 rounded-xl border border-slate-600/60 transition">
+                    <span class="block text-[10px] text-slate-400">Wallet</span>
+                    <span class="text-xs font-bold text-teal-300" id="custQuickBalance">£68.50</span>
+                  </button>
+                </div>
+
+                <!-- Pickup Schedule Alert -->
+                <div class="mt-3 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs">
+                  <div class="flex items-center space-x-2 text-teal-300">
+                    <i class="fa-solid fa-calendar-check text-xs"></i>
+                    <span class="text-[11px]">Next Pickup Slot: <strong>Thursday, 9:00 AM</strong></span>
+                  </div>
+                  <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full font-medium">Scheduled</span>
+                </div>
+              </div>
+
+              <!-- Quick Action Grid -->
+              <div class="grid grid-cols-4 gap-2">
+                <button onclick="openCustomerTab('book')" class="flex flex-col items-center justify-center p-2.5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-teal-400 hover:shadow-md transition group">
+                  <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-1 group-hover:bg-teal-500 group-hover:text-white transition">
+                    <i class="fa-solid fa-calendar-plus text-sm"></i>
+                  </div>
+                  <span class="text-[10px] font-semibold text-slate-700 text-center">Book</span>
+                </button>
+                
+                <button onclick="openCustomerTab('tracking')" class="flex flex-col items-center justify-center p-2.5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-teal-400 hover:shadow-md transition group">
+                  <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-1 group-hover:bg-blue-500 group-hover:text-white transition">
+                    <i class="fa-solid fa-route text-sm"></i>
+                  </div>
+                  <span class="text-[10px] font-semibold text-slate-700 text-center">Track</span>
+                </button>
+
+                <button onclick="openCustomerTab('plans')" class="flex flex-col items-center justify-center p-2.5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-teal-400 hover:shadow-md transition group">
+                  <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-1 group-hover:bg-amber-500 group-hover:text-white transition">
+                    <i class="fa-solid fa-crown text-sm"></i>
+                  </div>
+                  <span class="text-[10px] font-semibold text-slate-700 text-center">Plans</span>
+                </button>
+
+                <button onclick="openSupportModal()" class="flex flex-col items-center justify-center p-2.5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-teal-400 hover:shadow-md transition group">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 group-hover:bg-emerald-500 group-hover:text-white transition">
+                    <i class="fa-solid fa-phone text-sm"></i>
+                  </div>
+                  <span class="text-[10px] font-semibold text-slate-700 text-center">Support</span>
+                </button>
+              </div>
+
+              <!-- ACTIVE LIVE ORDER CARD -->
+              <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Live Processing</span>
+                    <h4 class="font-bold text-xs text-slate-800" id="homeOrderNumber">Order #BK-9421</h4>
+                  </div>
+                  <span id="homeOrderStatusBadge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                    In Ironing Bay
+                  </span>
+                </div>
+
+                <!-- Micro progress bar -->
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div id="homeProgressBar" class="bg-teal-500 h-2 rounded-full transition-all duration-500" style="width: 60%"></div>
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                  <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-bag-shopping text-teal-500"></i>
+                    <span id="homeOrderBagTag">Bag #BAG-8821 (14 items)</span>
+                  </span>
+                  <button onclick="openCustomerTab('tracking')" class="text-teal-600 font-bold hover:underline">
+                    View Live Details &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- SUBSCRIPTION SUMMARY CARD -->
+              <div class="bg-gradient-to-br from-teal-500/10 to-teal-600/5 p-4 rounded-3xl border border-teal-200/60">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-bold text-xs text-teal-900">Your Active Plan: <span id="homePlanTitle">Premium Wash & Steam</span></h4>
+                    <p class="text-[11px] text-slate-600 mt-0.5">38 garments quota remaining this billing cycle</p>
+                  </div>
+                  <span class="text-xs font-black text-teal-700">£55/mo</span>
+                </div>
+                <div class="mt-3 flex gap-2">
+                  <button onclick="openCustomerTab('book')" class="flex-1 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold text-center transition">
+                    Use Quota Pickup
+                  </button>
+                  <button onclick="openCustomerTab('plans')" class="px-3 py-1.5 bg-white border border-teal-300 text-teal-800 rounded-xl text-xs font-medium hover:bg-teal-50 transition">
+                    Change Plan
+                  </button>
+                </div>
+              </div>
+
+              <!-- RECENT ACTIVITY SNIPPET -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                  <h4 class="font-bold text-xs text-slate-700">Recent Service Activity</h4>
+                  <span class="text-[10px] text-slate-400">View All</span>
+                </div>
+                <div class="space-y-2" id="homeRecentActivityList">
+                  <div class="bg-white p-3 rounded-2xl border border-slate-100 flex items-center justify-between text-xs shadow-2xs">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-check"></i>
+                      </div>
+                      <div>
+                        <p class="font-semibold text-slate-800 text-[11px]">Completed & Delivered</p>
+                        <p class="text-[10px] text-slate-400">Order #BK-9310 • 10 Shirts</p>
+                      </div>
+                    </div>
+                    <span class="font-medium text-slate-500 text-[10px]">Yesterday</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW: BOOK PICKUP SCREEN -->
+            <section id="custView-book" class="hidden p-4 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-base text-slate-900">Schedule Pickup</h3>
+                  <p class="text-[11px] text-slate-500">Weekly area schedule & garment estimates</p>
+                </div>
+                <span class="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">Step 1 of 2</span>
+              </div>
+
+              <!-- Area Schedule Notice -->
+              <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900">
+                <i class="fa-solid fa-clock-rotate-left mt-0.5 text-amber-600"></i>
+                <div class="text-[11px] leading-tight">
+                  <strong class="font-semibold">Area Designated Schedules:</strong>
+                  Pickups in <strong>Zone A (Central)</strong> run Mondays & Thursdays. Vans arrive between 8:00 AM - 12:00 PM.
+                </div>
+              </div>
+
+              <!-- Select Area & Date -->
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-700 mb-1">Pickup Zone / Area</label>
+                  <select id="bookPickupArea" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs text-slate-800 focus:outline-none focus:border-teal-500 font-medium">
+                    <option value="Zone A - Central">Zone A - Central (Mon / Thu Schedule)</option>
+                    <option value="Zone B - West">Zone B - West (Tue / Fri Schedule)</option>
+                    <option value="Zone C - North">Zone C - North (Wed / Sat Schedule)</option>
+                    <option value="Zone D - South">Zone D - South (Mon / Wed Schedule)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-700 mb-1">Select Pickup Date</label>
+                  <input type="date" id="bookPickupDate" value="2026-11-12" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs text-slate-800 focus:outline-none focus:border-teal-500" />
+                </div>
+              </div>
+
+              <!-- Garment Counter (Cloth Breakdown) -->
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h4 class="font-bold text-xs text-slate-800">Garment Breakdown Estimate</h4>
+                  <span class="text-[10px] text-slate-400">Driver scans bag on receipt</span>
+                </div>
+
+                <!-- Items counter list -->
+                <div class="space-y-2.5 text-xs">
+                  <!-- Shirt item -->
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-800 text-[11px]">Formal Shirts / Tops</p>
+                      <p class="text-[10px] text-slate-400">£2.50 / piece (Wash & Iron)</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button onclick="updateGarmentCount('shirts', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold flex items-center justify-center">-</button>
+                      <span id="cnt-shirts" class="w-6 text-center font-bold text-xs">6</span>
+                      <button onclick="updateGarmentCount('shirts', 1)" class="w-7 h-7 rounded-lg bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Trousers item -->
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-800 text-[11px]">Trousers / Jeans</p>
+                      <p class="text-[10px] text-slate-400">£3.00 / piece (Steam Press)</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button onclick="updateGarmentCount('trousers', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold flex items-center justify-center">-</button>
+                      <span id="cnt-trousers" class="w-6 text-center font-bold text-xs">4</span>
+                      <button onclick="updateGarmentCount('trousers', 1)" class="w-7 h-7 rounded-lg bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Dresses item -->
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-800 text-[11px]">Dresses / Kurtas</p>
+                      <p class="text-[10px] text-slate-400">£5.00 / piece (Delicate Care)</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button onclick="updateGarmentCount('dresses', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold flex items-center justify-center">-</button>
+                      <span id="cnt-dresses" class="w-6 text-center font-bold text-xs">2</span>
+                      <button onclick="updateGarmentCount('dresses', 1)" class="w-7 h-7 rounded-lg bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Suits / Blazers item -->
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-800 text-[11px]">Suits & Blazers</p>
+                      <p class="text-[10px] text-slate-400">£8.50 / piece (Steam Finishing)</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button onclick="updateGarmentCount('suits', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold flex items-center justify-center">-</button>
+                      <span id="cnt-suits" class="w-6 text-center font-bold text-xs">0</span>
+                      <button onclick="updateGarmentCount('suits', 1)" class="w-7 h-7 rounded-lg bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Linens item -->
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-800 text-[11px]">Bed Linens & Towels</p>
+                      <p class="text-[10px] text-slate-400">£4.00 / kg</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button onclick="updateGarmentCount('linens', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold flex items-center justify-center">-</button>
+                      <span id="cnt-linens" class="w-6 text-center font-bold text-xs">2</span>
+                      <button onclick="updateGarmentCount('linens', 1)" class="w-7 h-7 rounded-lg bg-teal-500 hover:bg-teal-600 active:scale-95 text-white font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Total Calculation Bar -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400">Total Estimated Pieces:</span>
+                    <p class="font-bold text-sm text-slate-800"><span id="bookTotalPieces">14</span> Garments</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[10px] text-slate-400">Est. Amount (Deducted on Receipt):</span>
+                    <p class="font-black text-sm text-teal-600" id="bookEstCost">£45.00</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Special Handling Instructions -->
+              <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Special Garment Instructions</label>
+                <textarea id="bookNotes" rows="2" placeholder="e.g., Heavy starch on collared shirts, gentle steam on silk items..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs text-slate-800 focus:outline-none focus:border-teal-500"></textarea>
+              </div>
+
+              <!-- Confirmation CTA -->
+              <button onclick="submitPickupBooking()" class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold rounded-2xl text-xs transition shadow-lg shadow-teal-600/30 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-box"></i>
+                <span>Confirm Pickup Request</span>
+              </button>
+            </section>
+
+            <!-- VIEW: LIVE ORDER TRACKING -->
+            <section id="custView-tracking" class="hidden p-4 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-base text-slate-900">Live Garment Tracking</h3>
+                  <p class="text-[11px] text-slate-500">Real-time custody & stage progression</p>
+                </div>
+                <button onclick="fastForwardOrderStep()" class="text-[10px] bg-teal-100 hover:bg-teal-200 text-teal-800 px-2.5 py-1 rounded-xl font-bold border border-teal-300 transition flex items-center gap-1">
+                  <i class="fa-solid fa-forward-step"></i>
+                  <span>Simulate Next Step</span>
+                </button>
+              </div>
+
+              <!-- Order Overview Card -->
+              <div class="bg-slate-900 text-white p-4 rounded-3xl shadow-lg border border-slate-800 space-y-3">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] text-teal-400 font-semibold tracking-wider uppercase">Order Identifier</span>
+                    <h4 class="font-extrabold text-sm text-white" id="trackOrderCode">#BK-9421</h4>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[10px] text-slate-400 block">Garment Count</span>
+                    <span class="text-xs font-bold text-slate-200" id="trackClothCount">14 Pieces</span>
+                  </div>
+                </div>
+
+                <div class="p-2.5 bg-slate-800/80 rounded-2xl flex items-center justify-between text-xs border border-slate-700">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center">
+                      <i class="fa-solid fa-qrcode text-xs"></i>
+                    </div>
+                    <div>
+                      <p class="text-[10px] text-slate-400">Assigned Laundry Bag QR</p>
+                      <p class="font-mono font-bold text-teal-300 text-[11px]" id="trackBagQrCode">#BAG-8821</p>
+                    </div>
+                  </div>
+                  <button onclick="showCustomerBagQrModal()" class="text-[10px] text-slate-300 bg-slate-700 px-2 py-1 rounded-lg hover:bg-slate-600">
+                    Show QR
+                  </button>
+                </div>
+              </div>
+
+              <!-- Multi-Stage Progress Timeline -->
+              <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+                <h4 class="font-bold text-xs text-slate-800 mb-3 flex items-center justify-between">
+                  <span>Lifecycle Milestone Progress</span>
+                  <span class="text-[10px] font-normal text-slate-400">Auto-synced</span>
+                </h4>
+
+                <div class="space-y-4 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200" id="trackingTimelineContainer">
+                  <!-- Generated dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Driver / Support Quick Card -->
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between text-xs">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+                    <i class="fa-solid fa-motorcycle text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-bold text-slate-800 text-[11px]">Assigned Delivery Partner</p>
+                    <p class="text-[10px] text-slate-500">Rajesh K. (Van #04) • Kensington Hub</p>
+                  </div>
+                </div>
+                <button onclick="callSupportPhone()" class="w-8 h-8 rounded-full bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white flex items-center justify-center transition">
+                  <i class="fa-solid fa-phone text-xs"></i>
+                </button>
+              </div>
+            </section>
+
+            <!-- VIEW: SUBSCRIPTION PLANS -->
+            <section id="custView-plans" class="hidden p-4 space-y-4">
+              <div>
+                <h3 class="font-bold text-base text-slate-900">Subscription Plans</h3>
+                <p class="text-[11px] text-slate-500">Convenient monthly cycles with inclusive pickup perks</p>
+              </div>
+
+              <!-- Plan Cards -->
+              <div class="space-y-3">
+                <!-- Tier 1: Standard Ironing -->
+                <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3 relative overflow-hidden">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Basic Tier</span>
+                      <h4 class="font-bold text-sm text-slate-800">Standard Ironing</h4>
+                      <p class="text-[11px] text-slate-500">Ideal for work shirts and casual wear</p>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-base font-black text-slate-900">£29</span>
+                      <span class="text-[10px] text-slate-400 block">/ month</span>
+                    </div>
+                  </div>
+
+                  <ul class="text-[11px] text-slate-600 space-y-1.5 border-t border-slate-100 pt-2">
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> 30 Garments per month</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> 2 Scheduled weekly pickups</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Crisp hanger packaging</li>
+                  </ul>
+
+                  <button onclick="selectSubscriptionPlan('Standard Ironing', 29)" class="w-full py-2 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 font-bold rounded-xl text-xs transition border border-slate-200">
+                    Switch to Standard (£29/mo)
+                  </button>
+                </div>
+
+                <!-- Tier 2: Premium Wash & Steam (Current) -->
+                <div class="bg-gradient-to-b from-teal-900 to-slate-900 text-white p-4 rounded-3xl border-2 border-teal-400 shadow-lg space-y-3 relative overflow-hidden">
+                  <div class="absolute top-2.5 right-3 bg-teal-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Most Popular
+                  </div>
+                  <div>
+                    <span class="text-[10px] font-bold text-teal-300 tracking-wider uppercase">Active Plan</span>
+                    <h4 class="font-bold text-sm text-white">Premium Wash & Steam</h4>
+                    <p class="text-[11px] text-slate-300">Complete wash, fabric softening & steam press</p>
+                  </div>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-xl font-black text-white">£55</span>
+                    <span class="text-xs text-slate-300">/ month</span>
+                  </div>
+
+                  <ul class="text-[11px] text-slate-300 space-y-1.5 border-t border-slate-800 pt-2">
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> 60 Garments monthly allowance</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> 4 Weekly designated pickups</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> Delicates & stain pre-treatment included</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> Dedicated reusable barcode laundry bag</li>
+                  </ul>
+
+                  <button onclick="renewSubscriptionPlan('Premium Wash & Steam', 55)" class="w-full py-2.5 bg-teal-400 hover:bg-teal-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md">
+                    Renew Active Plan (£55/mo)
+                  </button>
+                </div>
+
+                <!-- Tier 3: Family Executive Pass -->
+                <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Family Pass</span>
+                      <h4 class="font-bold text-sm text-slate-800">Executive Family Bundle</h4>
+                      <p class="text-[11px] text-slate-500">Complete household laundry & bedding</p>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-base font-black text-slate-900">£99</span>
+                      <span class="text-[10px] text-slate-400 block">/ month</span>
+                    </div>
+                  </div>
+
+                  <ul class="text-[11px] text-slate-600 space-y-1.5 border-t border-slate-100 pt-2">
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> 120 Garments + Heavy Linens</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Priority express 24h turnaround</li>
+                    <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> VIP Support line access</li>
+                  </ul>
+
+                  <button onclick="selectSubscriptionPlan('Executive Family Bundle', 99)" class="w-full py-2 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 font-bold rounded-xl text-xs transition border border-slate-200">
+                    Upgrade to Executive (£99/mo)
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW: DIGITAL WALLET & PAYMENTS -->
+            <section id="custView-wallet" class="hidden p-4 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-base text-slate-900">Digital Wallet</h3>
+                  <p class="text-[11px] text-slate-500">Auto-deductions upon laundry receipt count</p>
+                </div>
+                <!-- Currency Toggle: GBP / INR -->
+                <div class="flex bg-slate-200 p-0.5 rounded-lg text-xs font-bold">
+                  <button onclick="setCurrency('GBP')" id="currBtn-GBP" class="px-2 py-0.5 rounded-md bg-white text-teal-700 shadow-xs">GBP (£)</button>
+                  <button onclick="setCurrency('INR')" id="currBtn-INR" class="px-2 py-0.5 rounded-md text-slate-600">INR (₹)</button>
+                </div>
+              </div>
+
+              <!-- Main Balance Card -->
+              <div class="bg-gradient-to-tr from-slate-950 via-teal-950 to-slate-900 text-white p-5 rounded-3xl shadow-xl border border-teal-500/30 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-teal-400/20 rounded-full blur-2xl"></div>
+                <div class="flex justify-between items-start mb-4">
+                  <span class="text-xs text-slate-300 font-medium">Available Balance</span>
+                  <i class="fa-brands fa-cc-mastercard text-2xl text-teal-300"></i>
+                </div>
+                <div class="mb-4">
+                  <h2 class="text-3xl font-black text-white tracking-tight" id="walletBalanceDisplay">£68.50</h2>
+                  <p class="text-[10px] text-teal-300 mt-0.5">Prepaid Laundry Account • Sarah Jenkins</p>
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+                  <span>Linked Card: **** 4819</span>
+                  <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock text-[9px]"></i> Secure Float</span>
+                </div>
+              </div>
+
+              <!-- Quick Top-Up Selector -->
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm space-y-2.5">
+                <h4 class="font-bold text-xs text-slate-800">Quick Balance Top-Up</h4>
+                <div class="grid grid-cols-3 gap-2">
+                  <button onclick="quickTopUp(20)" class="py-2.5 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 active:scale-95 text-slate-800 font-bold rounded-xl text-xs border border-slate-200 transition">
+                    +<span class="topup-sym">£</span><span class="topup-val-1">20</span>
+                  </button>
+                  <button onclick="quickTopUp(50)" class="py-2.5 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 active:scale-95 text-slate-800 font-bold rounded-xl text-xs border border-slate-200 transition">
+                    +<span class="topup-sym">£</span><span class="topup-val-2">50</span>
+                  </button>
+                  <button onclick="quickTopUp(100)" class="py-2.5 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 active:scale-95 text-slate-800 font-bold rounded-xl text-xs border border-slate-200 transition">
+                    +<span class="topup-sym">£</span><span class="topup-val-3">100</span>
+                  </button>
+                </div>
+                <p class="text-[10px] text-slate-400 text-center">Payment Gateway Integrated (Visa, MC, UPI & Bank Cards)</p>
+              </div>
+
+              <!-- Transaction Ledger -->
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm space-y-2">
+                <div class="flex justify-between items-center mb-1">
+                  <h4 class="font-bold text-xs text-slate-800">Transaction History</h4>
+                  <span class="text-[10px] text-slate-400">Past 30 Days</span>
+                </div>
+                
+                <div class="space-y-2" id="walletLedgerList">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW: NOTIFICATIONS -->
+            <section id="custView-notifications" class="hidden p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base text-slate-900">Activity Notifications</h3>
+                <button onclick="clearAllNotifications()" class="text-[10px] text-teal-600 font-semibold hover:underline">Mark read</button>
+              </div>
+
+              <div class="space-y-2" id="notificationsList">
+                <!-- Dynamically rendered -->
+              </div>
+            </section>
+          </div>
+
+          <!-- CUSTOMER BOTTOM NAVIGATION BAR -->
+          <footer class="w-full bg-white border-t border-slate-200 absolute bottom-0 left-0 right-0 py-2 px-3 flex items-center justify-around z-20 shadow-lg">
+            <button onclick="openCustomerTab('home')" id="custTabBtn-home" class="cust-nav-btn flex flex-col items-center text-teal-600 transition">
+              <i class="fa-solid fa-house text-sm"></i>
+              <span class="text-[10px] font-semibold mt-0.5">Home</span>
+            </button>
+            <button onclick="openCustomerTab('book')" id="custTabBtn-book" class="cust-nav-btn flex flex-col items-center text-slate-400 hover:text-teal-600 transition">
+              <i class="fa-solid fa-calendar-plus text-sm"></i>
+              <span class="text-[10px] font-semibold mt-0.5">Book</span>
+            </button>
+            <button onclick="openCustomerTab('tracking')" id="custTabBtn-tracking" class="cust-nav-btn flex flex-col items-center text-slate-400 hover:text-teal-600 transition">
+              <i class="fa-solid fa-clock-rotate-left text-sm"></i>
+              <span class="text-[10px] font-semibold mt-0.5">Tracking</span>
+            </button>
+            <button onclick="openCustomerTab('wallet')" id="custTabBtn-wallet" class="cust-nav-btn flex flex-col items-center text-slate-400 hover:text-teal-600 transition">
+              <i class="fa-solid fa-wallet text-sm"></i>
+              <span class="text-[10px] font-semibold mt-0.5">Wallet</span>
+            </button>
+            <button onclick="openCustomerTab('notifications')" id="custTabBtn-notifications" class="cust-nav-btn flex flex-col items-center text-slate-400 hover:text-teal-600 transition relative">
+              <i class="fa-solid fa-bell text-sm"></i>
+              <span id="notifBadgeDot" class="w-2 h-2 rounded-full bg-red-500 absolute -top-0.5 right-1"></span>
+              <span class="text-[10px] font-semibold mt-0.5">Alerts</span>
+            </button>
+          </footer>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ROLE 2: DELIVERY PARTNER APPLICATION -->
+        <!-- ============================================== -->
+        <div id="role-delivery-container" class="role-screen hidden flex-1 flex flex-col overflow-hidden bg-slate-100">
+          <!-- Delivery App Header -->
+          <div class="bg-slate-900 text-white p-4 shadow-md flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center font-bold text-white shadow-xs">
+                <i class="fa-solid fa-truck"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-xs text-white">Delivery Partner Fleet</h3>
+                <p class="text-[10px] text-teal-400">Driver: Rajesh K. • Van #04</p>
+              </div>
+            </div>
+            <span class="text-[9px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">On Shift</span>
+          </div>
+
+          <!-- Sub Tabs: Assigned Pickups vs Deliveries -->
+          <div class="bg-white border-b border-slate-200 px-3 py-2 flex gap-2">
+            <button onclick="switchDeliveryQueue('pickup')" id="delTab-pickup" class="flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200">
+              Pickup Jobs (<span id="delPickupCount">1</span>)
+            </button>
+            <button onclick="switchDeliveryQueue('dropoff')" id="delTab-dropoff" class="flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">
+              Out for Delivery (<span id="delDropoffCount">1</span>)
+            </button>
+          </div>
+
+          <!-- Delivery Jobs List Viewport -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar" id="deliveryJobsList">
+            <!-- Dynamic Delivery Jobs inserted via JS -->
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ROLE 3: LAUNDRY OPERATIONS APPLICATION -->
+        <!-- ============================================== -->
+        <div id="role-laundry-container" class="role-screen hidden flex-1 flex flex-col overflow-hidden bg-slate-100">
+          <div class="bg-slate-900 text-white p-4 shadow-md flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center font-bold text-white shadow-xs">
+                <i class="fa-solid fa-jug-detergent"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-xs text-white">Plant Hub Operations</h3>
+                <p class="text-[10px] text-teal-400">Facility Station #02 • Inward & Ironing</p>
+              </div>
+            </div>
+            <span class="text-[9px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold">Live Bay</span>
+          </div>
+
+          <!-- Section Switcher -->
+          <div class="bg-white border-b border-slate-200 px-3 py-2 flex gap-2">
+            <button onclick="switchLaundryStage('inward')" id="laundryTab-inward" class="flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200">
+              Inward Receipt & Count
+            </button>
+            <button onclick="switchLaundryStage('processing')" id="laundryTab-processing" class="flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">
+              Ironing & QC Workflow
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar" id="laundryContentArea">
+            <!-- Dynamic Laundry Workflow inserted via JS -->
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ROLE 4: WEB ADMIN PANEL VIEW -->
+        <!-- ============================================== -->
+        <div id="role-admin-container" class="role-screen hidden flex-1 flex flex-col overflow-hidden bg-slate-100">
+          <div class="bg-slate-900 text-white p-4 shadow-md flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-xs text-white">BIZNISKING Admin Control</h3>
+              <p class="text-[10px] text-slate-400">Operations, Subscriptions & Scheduling</p>
+            </div>
+            <span class="text-[9px] bg-purple-600 text-white px-2 py-0.5 rounded-full font-bold">Super Admin</span>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+            <!-- Admin KPI Cards -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+                <span class="text-[10px] font-semibold text-slate-400 block">Active Orders</span>
+                <span class="text-lg font-black text-slate-900" id="kpiActiveOrders">3</span>
+                <span class="text-[9px] text-emerald-600 font-bold block">● All on schedule</span>
+              </div>
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+                <span class="text-[10px] font-semibold text-slate-400 block">Garments Today</span>
+                <span class="text-lg font-black text-teal-600" id="kpiTotalGarments">42 pcs</span>
+                <span class="text-[9px] text-slate-500 block">Across 3 zones</span>
+              </div>
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+                <span class="text-[10px] font-semibold text-slate-400 block">Subscribers</span>
+                <span class="text-lg font-black text-indigo-600" id="kpiActiveSubs">184</span>
+                <span class="text-[9px] text-indigo-500 block">+12 this week</span>
+              </div>
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+                <span class="text-[10px] font-semibold text-slate-400 block">Total Wallet Float</span>
+                <span class="text-lg font-black text-emerald-600" id="kpiWalletFloat">£4,820</span>
+                <span class="text-[9px] text-slate-400 block">Secure escrow</span>
+              </div>
+            </div>
+
+            <!-- Area Schedule Manager (From Slide 05 & 06) -->
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-xs text-slate-800">Zone-Wise Pickup Days</h4>
+                <button onclick="showToast('Area schedules updated')" class="text-[10px] text-teal-600 font-bold hover:underline">Save Rule</button>
+              </div>
+              <div class="space-y-1.5 text-[11px]">
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+                  <span class="font-semibold text-slate-700">Zone A (Central Kensington)</span>
+                  <span class="bg-teal-100 text-teal-800 px-2 py-0.5 rounded font-medium">Mon & Thu</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+                  <span class="font-semibold text-slate-700">Zone B (Westminster Outer)</span>
+                  <span class="bg-teal-100 text-teal-800 px-2 py-0.5 rounded font-medium">Tue & Fri</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+                  <span class="font-semibold text-slate-700">Zone C (North Chelsea)</span>
+                  <span class="bg-teal-100 text-teal-800 px-2 py-0.5 rounded font-medium">Wed & Sat</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Master Order Status Table -->
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+              <h4 class="font-bold text-xs text-slate-800">Live Orders Ledger</h4>
+              <div class="space-y-2" id="adminOrdersTable">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANDROID BOTTOM GESTURE PILL -->
+        <div class="w-full bg-white py-1.5 flex justify-center items-center z-30 select-none">
+          <div class="w-32 h-1 bg-slate-300 rounded-full"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODALS & SIMULATION DIALOGS -->
+  <!-- ======================================================== -->
+
+  <!-- MODAL: SIMULATED BAG QR SCANNER (FOR DELIVERY & LAUNDRY) -->
+  <div id="modal-qrScanner" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-3xl p-5 text-white flex flex-col items-center relative">
+      <button onclick="closeQrScannerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="text-center mb-4">
+        <h3 class="font-bold text-base text-white flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-qrcode text-teal-400"></i>
+          <span>Bag QR Code Scanner</span>
+        </h3>
+        <p class="text-[11px] text-slate-400">Align customer bag barcode within viewfinder</p>
+      </div>
+
+      <!-- Viewfinder with animated laser line -->
+      <div class="w-56 h-56 border-2 border-teal-400 rounded-2xl relative overflow-hidden bg-slate-950 flex items-center justify-center shadow-lg shadow-teal-500/20">
+        <!-- Corner brackets -->
+        <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-teal-300"></div>
+        <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-teal-300"></div>
+        <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-teal-300"></div>
+        <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-teal-300"></div>
+
+        <!-- Simulated bag tag graphic -->
+        <div class="opacity-30 text-center">
+          <i class="fa-solid fa-barcode text-6xl text-slate-400"></i>
+          <p class="text-[10px] font-mono mt-1 text-slate-400">#BAG-8821</p>
+        </div>
+
+        <!-- Animated Laser Scan Line -->
+        <div class="absolute top-4 left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent shadow-[0_0_8px_#2dd4bf] animate-scan"></div>
+      </div>
+
+      <div class="mt-4 w-full flex flex-col gap-2">
+        <button onclick="executeQrScanSuccess()" class="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+          <i class="fa-solid fa-camera"></i>
+          <span>Simulate Scan Match (#BAG-8821)</span>
+        </button>
+        <button onclick="closeQrScannerModal()" class="w-full py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-medium hover:bg-slate-700">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DIGITAL SIGNATURE PAD (DELIVERY DROP-OFF) -->
+  <div id="modal-signature" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 text-slate-800 flex flex-col items-center">
+      <div class="w-full flex items-center justify-between mb-2">
+        <h3 class="font-bold text-sm text-slate-900">Customer Proof of Delivery</h3>
+        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Order #BK-9421</span>
+      </div>
+      <p class="text-[11px] text-slate-500 mb-3 text-left w-full">Please obtain customer digital signature on touch screen below:</p>
+
+      <!-- Signature Canvas -->
+      <div class="w-full h-44 bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl relative overflow-hidden">
+        <canvas id="sigCanvas" class="w-full h-full cursor-crosshair"></canvas>
+        <span class="absolute bottom-2 right-3 text-[10px] text-slate-400 pointer-events-none select-none">Sign Above Line</span>
+      </div>
+
+      <div class="w-full flex items-center justify-between mt-3 gap-2">
+        <button onclick="clearSignatureCanvas()" class="px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">
+          Clear
+        </button>
+        <button onclick="confirmDeliveryWithSignature()" class="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition">
+          Confirm Delivery & Complete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CUSTOMER BAG QR DISPLAY -->
+  <div id="modal-custBagQr" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-3xl p-6 text-center text-slate-800">
+      <h3 class="font-bold text-base text-slate-900">Your Laundry Bag Tag</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-4">Show this to driver upon pickup if bag has no physical label</p>
+      
+      <div class="w-48 h-48 mx-auto bg-slate-100 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center p-3">
+        <i class="fa-solid fa-qrcode text-8xl text-slate-800"></i>
+        <span class="font-mono text-xs font-bold mt-2 text-teal-700">BAG-BK-8821</span>
+      </div>
+
+      <button onclick="closeCustomerBagQrModal()" class="w-full mt-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-slate-800">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: APK / PWA INSTALLATION HELPER -->
+  <div id="modal-apkDownload" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-3xl p-6 text-white shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <i class="fa-brands fa-android text-2xl text-emerald-400"></i>
+          <div>
+            <h3 class="font-bold text-sm text-white">Android Application Download</h3>
+            <p class="text-[10px] text-slate-400">BIZNISKING Laundry Mobile Suite</p>
+          </div>
+        </div>
+        <button onclick="closeApkModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300">
+        <div class="bg-slate-800 p-3.5 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-teal-300 text-xs mb-1">Option 1: Instant Android Install (PWA)</h4>
+          <p class="text-[11px] leading-relaxed">
+            You can install this interactive app directly onto your Android device home screen without visiting the Play Store:
+          </p>
+          <ol class="list-decimal list-inside text-[11px] mt-1.5 space-y-1 text-slate-300">
+            <li>Open this URL in <strong>Google Chrome</strong> on your phone.</li>
+            <li>Tap the browser menu <strong>(⋮)</strong> at top-right.</li>
+            <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+            <li>The BIZNISKING icon will launch full screen with native Android speed!</li>
+          </ol>
+        </div>
+
+        <div class="bg-slate-800 p-3.5 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-emerald-300 text-xs mb-1">Option 2: Generate Web Manifest & Offline Code</h4>
+          <p class="text-[11px] leading-relaxed">
+            Download the deployment package file to compile into a native unsigned `.apk` via Android Studio or Bubblewrap CLI:
+          </p>
+          <div class="flex gap-2 mt-2">
+            <button onclick="downloadManifestFile()" class="flex-1 py-2 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-xl text-[11px] transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-file-code"></i>
+              <span>Save manifest.json</span>
+            </button>
+            <button onclick="downloadHtmlFile()" class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-[11px] transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-download"></i>
+              <span>Save Offline HTML</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeApkModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition">
+        Return to Prototype
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-teal-500/50 text-xs font-semibold flex items-center gap-2 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <i class="fa-solid fa-circle-info text-teal-400"></i>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+
+  <!-- JAVASCRIPT STATE & INTERACTION LOGIC -->
+  <script>
+    /* ========================================================
+       GLOBAL STATE (REACTIVE PROTOTYPE STORE)
+       ======================================================== */
+    const store = {
+      role: 'customer',           // customer, delivery, laundry, admin
+      customerTab: 'home',        // home, book, tracking, plans, wallet, notifications
+      currency: 'GBP',            // GBP or INR
+      currencySymbol: '£',
+      currencyRate: 1.0,          // 1 GBP = 100 INR approx for toggle
+      walletBalance: 68.50,
+      activeSubscription: {
+        title: 'Premium Wash & Steam',
+        price: 55,
+        quotaTotal: 60,
+        quotaRemaining: 38,
+        badge: 'PREMIUM'
+      },
+      garmentCounts: {
+        shirts: 6,
+        trousers: 4,
+        dresses: 2,
+        suits: 0,
+        linens: 2
+      },
+      garmentPricing: {
+        shirts: 2.50,
+        trousers: 3.00,
+        dresses: 5.00,
+        suits: 8.50,
+        linens: 4.00
+      },
+      // Current Master Order tracked across all 4 roles
+      activeOrder: {
+        id: '#BK-9421',
+        customerName: 'Sarah Jenkins',
+        phone: '+44 7700 900077',
+        address: 'Flat 4B, 18 Kensington Gardens, W8 4PU',
+        area: 'Zone A - Central',
+        bagQr: '#BAG-8821',
+        pickupDate: 'Thursday, 9:00 AM',
+        clothCount: 14,
+        statusStep: 4, // 0 to 7
+        verifiedCount: 14,
+        laundryDiscrepancy: false,
+        totalCost: 45.00
+      },
+      // Lifecycle steps based on slide 03 & 04
+      lifecycleSteps: [
+        { title: 'Pickup Requested', desc: 'Customer selected 14 items & scheduled pickup', icon: 'fa-calendar-check' },
+        { title: 'Driver Assigned', desc: 'Rajesh K. (Van #04) dispatched to Zone A', icon: 'fa-id-badge' },
+        { title: 'Bag Picked & Scanned', desc: 'Bag barcode tagged #BAG-8821 at doorstep', icon: 'fa-barcode' },
+        { title: 'Laundry Received & Counted', desc: 'Bay operator verified 14 garments received', icon: 'fa-clipboard-check' },
+        { title: 'Steam Ironing & Processing', desc: 'Ironing, stain treatment & quality check', icon: 'fa-jug-detergent' },
+        { title: 'Packed & Ready for Dispatch', desc: 'Garments hung, sealed & racked for delivery', icon: 'fa-box-open' },
+        { title: 'Out for Delivery', desc: 'Driver en route with clean fresh garments', icon: 'fa-truck-fast' },
+        { title: 'Delivered to Customer', desc: 'Handed over & digital signature confirmed', icon: 'fa-circle-check' }
+      ],
+      transactions: [
+        { id: 'TX-701', title: 'Pickup Order #BK-9310', amount: -28.00, date: '10 Nov 2026', type: 'debit' },
+        { id: 'TX-700', title: 'Wallet Top-up via Card', amount: 50.00, date: '08 Nov 2026', type: 'credit' },
+        { id: 'TX-699', title: 'Monthly Plan Renewal', amount: -55.00, date: '01 Nov 2026', type: 'debit' }
+      ],
+      notifications: [
+        { id: 1, title: 'Garments in Ironing Bay', desc: 'Order #BK-9421 has entered steam press station.', time: '10m ago', unread: true },
+        { id: 2, title: 'Bag Tagged by Driver', desc: 'Bag #BAG-8821 picked up from your address.', time: '2h ago', unread: false },
+        { id: 3, title: 'Weekly Pickup Tomorrow', desc: 'Reminder: Kensington West pickup runs Thursday morning.', time: '1d ago', unread: false }
+      ],
+      audioCtx: null
+    };
+
+    /* ========================================================
+       SYNTHETIC AUDIO CHIMES (NO EXTERNAL MP3 URLS NEEDED)
+       ======================================================== */
+    function playBeep(freq = 880, type = 'sine', duration = 0.12) {
+      try {
+        if (!store.audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) store.audioCtx = new AudioContext();
+        }
+        if (!store.audioCtx) return;
+        const osc = store.audioCtx.createOscillator();
+        const gain = store.audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, store.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, store.audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(store.audioCtx.destination);
+        osc.start();
+        osc.stop(store.audioCtx.currentTime + duration);
+      } catch (e) {
+        // AudioContext restricted before first gesture
+      }
+    }
+
+    /* ========================================================
+       TOAST MESSAGE UTILITY (NO ALERT DIALOGS)
+       ======================================================== */
+    let toastTimeout;
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMsg');
+      msg.textContent = message;
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      playBeep(isSuccess ? 960 : 440, 'triangle');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('-translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    /* ========================================================
+       INITIALIZATION
+       ======================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      updateLiveClock();
+      setInterval(updateLiveClock, 1000);
+
+      renderCustomerTrackingTimeline();
+      renderCustomerLedger();
+      renderCustomerNotifications();
+      renderDeliveryJobs();
+      renderLaundryWorkflow();
+      renderAdminDashboard();
+      updateGarmentCalculations();
+      initSignatureCanvas();
+    });
+
+    function updateLiveClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const clockEl = document.getElementById('androidClock');
+      if (clockEl) clockEl.textContent = `${hours}:${minutes}`;
+    }
+
+    /* ========================================================
+       FRAME & VIEW TOGGLES
+       ======================================================== */
+    let isFullscreenMode = false;
+    function toggleDeviceFrame() {
+      isFullscreenMode = !isFullscreenMode;
+      const wrapper = document.getElementById('deviceWrapper');
+      const bezel = document.getElementById('phoneBezel');
+      const viewport = document.getElementById('appViewport');
+      const btnText = document.getElementById('frameToggleText');
+
+      if (isFullscreenMode) {
+        wrapper.className = 'w-full max-w-5xl transition-all duration-300 pb-4';
+        bezel.className = 'w-full bg-slate-900 p-1 rounded-2xl shadow-2xl border border-slate-700';
+        viewport.className = 'bg-slate-50 w-full h-[850px] rounded-xl overflow-hidden flex flex-col relative shadow-inner';
+        btnText.textContent = 'Phone Frame';
+      } else {
+        wrapper.className = 'w-full max-w-[420px] transition-all duration-300 pb-6 flex justify-center';
+        bezel.className = 'w-full bg-slate-950 p-2 sm:p-3 rounded-[44px] shadow-2xl border-[4px] border-slate-800 ring-1 ring-slate-700/50 relative';
+        viewport.className = 'bg-slate-50 w-full h-[760px] rounded-[36px] overflow-hidden flex flex-col relative shadow-inner text-slate-800';
+        btnText.textContent = 'Full Screen';
+      }
+    }
+
+    /* ========================================================
+       ROLE NAVIGATION
+       ======================================================== */
+    function switchRole(roleName) {
+      store.role = roleName;
+      playBeep(720);
+
+      // Update Top Nav Buttons
+      document.querySelectorAll('.role-tab').forEach(btn => {
+        btn.classList.remove('bg-teal-500', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-300');
+      });
+      const activeBtn = document.getElementById(`roleBtn-${roleName}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-teal-500', 'text-white', 'shadow-md');
+        activeBtn.classList.remove('text-slate-300');
+      }
+
+      // Hide all role screens
+      document.querySelectorAll('.role-screen').forEach(screen => {
+        screen.classList.add('hidden');
+      });
+
+      // Show selected screen
+      const targetScreen = document.getElementById(`role-${roleName}-container`);
+      if (targetScreen) targetScreen.classList.remove('hidden');
+
+      // Update role-specific states
+      if (roleName === 'delivery') renderDeliveryJobs();
+      if (roleName === 'laundry') renderLaundryWorkflow();
+      if (roleName === 'admin') renderAdminDashboard();
+    }
+
+    /* ========================================================
+       CUSTOMER ROLE VIEWS & NAVIGATION
+       ======================================================== */
+    function openCustomerTab(tabName) {
+      store.customerTab = tabName;
+      playBeep(800);
+
+      // Hide all customer subviews
+      const views = ['home', 'book', 'tracking', 'plans', 'wallet', 'notifications', 'auth'];
+      views.forEach(v => {
+        const el = document.getElementById(`custView-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Show target subview
+      const activeView = document.getElementById(`custView-${tabName}`);
+      if (activeView) activeView.classList.remove('hidden');
+
+      // Update footer icons
+      document.querySelectorAll('.cust-nav-btn').forEach(btn => {
+        btn.classList.remove('text-teal-600');
+        btn.classList.add('text-slate-400');
+      });
+      const currentNavBtn = document.getElementById(`custTabBtn-${tabName}`);
+      if (currentNavBtn) {
+        currentNavBtn.classList.add('text-teal-600');
+        currentNavBtn.classList.remove('text-slate-400');
+      }
+
+      if (tabName === 'notifications') {
+        const dot = document.getElementById('notifBadgeDot');
+        if (dot) dot.classList.add('hidden');
+      }
+    }
+
+    // Customer OTP Authentication Simulation
+    function sendCustomerOTP() {
+      const email = document.getElementById('authEmailInput').value;
+      if (!email || !email.includes('@')) {
+        showToast('Please enter a valid email address');
+        return;
+      }
+      document.getElementById('authEmailStep').classList.add('hidden');
+      document.getElementById('authOtpStep').classList.remove('hidden');
+      showToast('OTP sent! Use demo code: 5542');
+    }
+
+    function verifyCustomerOTP() {
+      showToast('Login Successful! Welcome back.');
+      openCustomerTab('home');
+    }
+
+    /* ========================================================
+       BOOKING & GARMENT COUNT CALCULATOR
+       ======================================================== */
+    function updateGarmentCount(type, delta) {
+      if (store.garmentCounts[type] + delta >= 0) {
+        store.garmentCounts[type] += delta;
+        document.getElementById(`cnt-${type}`).textContent = store.garmentCounts[type];
+        updateGarmentCalculations();
+        playBeep(640);
+      }
+    }
+
+    function updateGarmentCalculations() {
+      let totalPieces = 0;
+      let totalCost = 0;
+
+      for (const [item, count] of Object.entries(store.garmentCounts)) {
+        totalPieces += count;
+        totalCost += count * store.garmentPricing[item];
+      }
+
+      document.getElementById('bookTotalPieces').textContent = totalPieces;
+      const formatted = formatCurrency(totalCost);
+      document.getElementById('bookEstCost').textContent = formatted;
+    }
+
+    function submitPickupBooking() {
+      const total = parseInt(document.getElementById('bookTotalPieces').textContent);
+      if (total <= 0) {
+        showToast('Please select at least 1 garment');
+        return;
+      }
+      const area = document.getElementById('bookPickupArea').value;
+      const date = document.getElementById('bookPickupDate').value;
+      
+      // Update store master order
+      store.activeOrder.clothCount = total;
+      store.activeOrder.area = area;
+      store.activeOrder.pickupDate = date;
+      store.activeOrder.statusStep = 1; // Driver assigned
+      store.activeOrder.id = `#BK-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // Update UI displays
+      document.getElementById('homeOrderNumber').textContent = `Order ${store.activeOrder.id}`;
+      document.getElementById('trackOrderCode').textContent = store.activeOrder.id;
+      document.getElementById('trackClothCount').textContent = `${total} Pieces`;
+      document.getElementById('homeOrderBagTag').textContent = `Assigned Pickup (${total} items)`;
+
+      // Add notification
+      store.notifications.unshift({
+        id: Date.now(),
+        title: 'Pickup Confirmed',
+        desc: `Order ${store.activeOrder.id} booked for ${total} items. Driver assigned.`,
+        time: 'Just now',
+        unread: true
+      });
+      renderCustomerNotifications();
+      renderCustomerTrackingTimeline();
+      updateDashboardProgress();
+
+      showToast(`Order ${store.activeOrder.id} Booked Successfully!`);
+      openCustomerTab('tracking');
+    }
+
+    /* ========================================================
+       LIVE ORDER TRACKING TIMELINE
+       ======================================================== */
+    function renderCustomerTrackingTimeline() {
+      const container = document.getElementById('trackingTimelineContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      store.lifecycleSteps.forEach((step, index) => {
+        const isCurrent = index === store.activeOrder.statusStep;
+        const isCompleted = index < store.activeOrder.statusStep;
+
+        const row = document.createElement('div');
+        row.className = 'flex items-start space-x-3 relative z-10';
+
+        let badgeClass = 'bg-slate-200 text-slate-500 border border-slate-300';
+        let titleColor = 'text-slate-400';
+
+        if (isCompleted) {
+          badgeClass = 'bg-emerald-500 text-white shadow-xs';
+          titleColor = 'text-slate-800';
+        } else if (isCurrent) {
+          badgeClass = 'bg-teal-500 text-white animate-bounce shadow-md shadow-teal-500/30';
+          titleColor = 'text-teal-700 font-bold';
+        }
+
+        row.innerHTML = `
+          <div class="w-7 h-7 rounded-full ${badgeClass} flex items-center justify-center text-xs shrink-0 transition-all duration-300">
+            <i class="fa-solid ${step.icon}"></i>
+          </div>
+          <div class="flex-1 pb-1">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-bold ${titleColor}">${step.title}</h5>
+              ${isCompleted ? '<span class="text-[9px] text-emerald-600 font-semibold"><i class="fa-solid fa-check"></i> Done</span>' : ''}
+              ${isCurrent ? '<span class="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.2 rounded font-bold">In Progress</span>' : ''}
+            </div>
+            <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">${step.desc}</p>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function fastForwardOrderStep() {
+      if (store.activeOrder.statusStep < store.lifecycleSteps.length - 1) {
+        store.activeOrder.statusStep++;
+        updateDashboardProgress();
+        renderCustomerTrackingTimeline();
+        renderDeliveryJobs();
+        renderLaundryWorkflow();
+        renderAdminDashboard();
+        
+        const currentTitle = store.lifecycleSteps[store.activeOrder.statusStep].title;
+        showToast(`Step Updated: ${currentTitle}`);
+      } else {
+        showToast('Order is already delivered! Resetting loop...');
+        store.activeOrder.statusStep = 0;
+        updateDashboardProgress();
+        renderCustomerTrackingTimeline();
+      }
+    }
+
+    function updateDashboardProgress() {
+      const step = store.activeOrder.statusStep;
+      const totalSteps = store.lifecycleSteps.length - 1;
+      const percent = Math.min(100, Math.round((step / totalSteps) * 100));
+
+      const bar = document.getElementById('homeProgressBar');
+      if (bar) bar.style.width = `${percent}%`;
+
+      const badge = document.getElementById('homeOrderStatusBadge');
+      if (badge) {
+        badge.textContent = store.lifecycleSteps[step].title;
+      }
+    }
+
+    /* ========================================================
+       SUBSCRIPTIONS & WALLET
+       ======================================================== */
+    function setCurrency(curr) {
+      store.currency = curr;
+      if (curr === 'GBP') {
+        store.currencySymbol = '£';
+        store.currencyRate = 1.0;
+        document.getElementById('currBtn-GBP').className = 'px-2 py-0.5 rounded-md bg-white text-teal-700 shadow-xs';
+        document.getElementById('currBtn-INR').className = 'px-2 py-0.5 rounded-md text-slate-600';
+      } else {
+        store.currencySymbol = '₹';
+        store.currencyRate = 100.0;
+        document.getElementById('currBtn-INR').className = 'px-2 py-0.5 rounded-md bg-white text-teal-700 shadow-xs';
+        document.getElementById('currBtn-GBP').className = 'px-2 py-0.5 rounded-md text-slate-600';
+      }
+
+      // Update top up labels
+      document.querySelectorAll('.topup-sym').forEach(el => el.textContent = store.currencySymbol);
+      document.querySelector('.topup-val-1').textContent = curr === 'GBP' ? '20' : '500';
+      document.querySelector('.topup-val-2').textContent = curr === 'GBP' ? '50' : '1500';
+      document.querySelector('.topup-val-3').textContent = curr === 'GBP' ? '100' : '3000';
+
+      updateWalletDisplay();
+      updateGarmentCalculations();
+      renderCustomerLedger();
+    }
+
+    function formatCurrency(amountGbp) {
+      const converted = amountGbp * store.currencyRate;
+      return `${store.currencySymbol}${converted.toFixed(2)}`;
+    }
+
+    function updateWalletDisplay() {
+      const formatted = formatCurrency(store.walletBalance);
+      document.getElementById('walletBalanceDisplay').textContent = formatted;
+      document.getElementById('custQuickBalance').textContent = formatted;
+    }
+
+    function quickTopUp(baseAmount) {
+      const amountGbp = baseAmount;
+      store.walletBalance += amountGbp;
+      
+      store.transactions.unshift({
+        id: `TX-${Math.floor(700 + Math.random() * 200)}`,
+        title: 'Instant Wallet Top-up',
+        amount: amountGbp,
+        date: 'Today',
+        type: 'credit'
+      });
+
+      updateWalletDisplay();
+      renderCustomerLedger();
+      showToast(`Added ${formatCurrency(amountGbp)} to digital wallet!`);
+    }
+
+    function renderCustomerLedger() {
+      const list = document.getElementById('walletLedgerList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      store.transactions.forEach(tx => {
+        const isCredit = tx.type === 'credit';
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs';
+        item.innerHTML = `
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg ${isCredit ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-[11px]">
+              <i class="fa-solid ${isCredit ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 text-[11px]">${tx.title}</p>
+              <p class="text-[10px] text-slate-400">${tx.date} • ${tx.id}</p>
+            </div>
+          </div>
+          <span class="font-bold text-xs ${isCredit ? 'text-emerald-600' : 'text-slate-800'}">
+            ${isCredit ? '+' : ''}${formatCurrency(tx.amount)}
+          </span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function selectSubscriptionPlan(planTitle, costGbp) {
+      if (store.walletBalance < costGbp) {
+        showToast('Insufficient wallet float! Top up wallet first.', false);
+        openCustomerTab('wallet');
+        return;
+      }
+      store.walletBalance -= costGbp;
+      store.activeSubscription.title = planTitle;
+      store.activeSubscription.price = costGbp;
+      
+      store.transactions.unshift({
+        id: `TX-${Math.floor(700 + Math.random() * 200)}`,
+        title: `Plan Activated: ${planTitle}`,
+        amount: -costGbp,
+        date: 'Today',
+        type: 'debit'
+      });
+
+      updateWalletDisplay();
+      renderCustomerLedger();
+      document.getElementById('homePlanTitle').textContent = planTitle;
+      showToast(`Subscribed to ${planTitle}!`);
+      openCustomerTab('home');
+    }
+
+    function renewSubscriptionPlan(planTitle, costGbp) {
+      selectSubscriptionPlan(planTitle, costGbp);
+    }
+
+    /* ========================================================
+       NOTIFICATIONS
+       ======================================================== */
+    function renderCustomerNotifications() {
+      const container = document.getElementById('notificationsList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      store.notifications.forEach(n => {
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border text-xs ${n.unread ? 'bg-teal-50/50 border-teal-200' : 'bg-white border-slate-100'} shadow-2xs space-y-1`;
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <h5 class="font-bold text-slate-800 text-[11px]">${n.title}</h5>
+            <span class="text-[10px] text-slate-400">${n.time}</span>
+          </div>
+          <p class="text-[11px] text-slate-600">${n.desc}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function clearAllNotifications() {
+      store.notifications.forEach(n => n.unread = false);
+      renderCustomerNotifications();
+      showToast('All notifications marked as read');
+    }
+
+    /* ========================================================
+       ROLE 2: DELIVERY PARTNER OPERATIONS
+       ======================================================== */
+    let currentDeliveryTab = 'pickup';
+
+    function switchDeliveryQueue(tab) {
+      currentDeliveryTab = tab;
+      const btnPickup = document.getElementById('delTab-pickup');
+      const btnDrop = document.getElementById('delTab-dropoff');
+
+      if (tab === 'pickup') {
+        btnPickup.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200';
+        btnDrop.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100';
+      } else {
+        btnDrop.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200';
+        btnPickup.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100';
+      }
+      renderDeliveryJobs();
+    }
+
+    function renderDeliveryJobs() {
+      const list = document.getElementById('deliveryJobsList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const isPickupStage = store.activeOrder.statusStep < 3;
+      const isDeliveringStage = store.activeOrder.statusStep >= 5;
+
+      if (currentDeliveryTab === 'pickup') {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3';
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Doorstep Collection</span>
+              <h4 class="font-bold text-sm text-slate-900 mt-1">${store.activeOrder.customerName}</h4>
+              <p class="text-[11px] text-slate-500">${store.activeOrder.address}</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-teal-600">${store.activeOrder.id}</span>
+          </div>
+
+          <div class="p-2.5 bg-slate-50 rounded-2xl flex items-center justify-between text-xs">
+            <span class="text-slate-600"><i class="fa-solid fa-shirt text-teal-500"></i> Est: <strong>${store.activeOrder.clothCount} Items</strong></span>
+            <span class="text-slate-500"><i class="fa-solid fa-clock text-amber-500"></i> Slot: <strong>09:00 - 11:00 AM</strong></span>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="openQrScannerModal()" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-qrcode"></i>
+              <span>${store.activeOrder.statusStep >= 2 ? 'Bag Tagged (#BAG-8821)' : 'Scan Bag QR to Collect'}</span>
+            </button>
+            <a href="tel:07700900077" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-phone text-xs"></i>
+            </a>
+          </div>
+        `;
+        list.appendChild(card);
+      } else {
+        // Dropoff queue
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3';
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Drop-off Clean Clothes</span>
+              <h4 class="font-bold text-sm text-slate-900 mt-1">${store.activeOrder.customerName}</h4>
+              <p class="text-[11px] text-slate-500">${store.activeOrder.address}</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-teal-600">${store.activeOrder.id}</span>
+          </div>
+
+          <div class="p-2 bg-slate-50 rounded-2xl flex items-center justify-between text-xs">
+            <span class="text-slate-600">Bag: <strong class="font-mono text-teal-700">${store.activeOrder.bagQr}</strong></span>
+            <span class="text-emerald-600 font-bold"><i class="fa-solid fa-sparkles"></i> Steam Pressed</span>
+          </div>
+
+          <button onclick="openSignatureModal()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-pen-nib"></i>
+            <span>Obtain Customer Signature</span>
+          </button>
+        `;
+        list.appendChild(card);
+      }
+    }
+
+    /* ========================================================
+       ROLE 3: LAUNDRY PLANT OPERATIONS
+       ======================================================== */
+    let currentLaundryStage = 'inward';
+
+    function switchLaundryStage(stage) {
+      currentLaundryStage = stage;
+      const tabInward = document.getElementById('laundryTab-inward');
+      const tabProcess = document.getElementById('laundryTab-processing');
+
+      if (stage === 'inward') {
+        tabInward.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200';
+        tabProcess.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100';
+      } else {
+        tabProcess.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200';
+        tabInward.className = 'flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100';
+      }
+      renderLaundryWorkflow();
+    }
+
+    function renderLaundryWorkflow() {
+      const container = document.getElementById('laundryContentArea');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (currentLaundryStage === 'inward') {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3';
+        card.innerHTML = `
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] text-teal-600 font-bold uppercase">Inward Receiving</span>
+              <h4 class="font-bold text-xs text-slate-900">${store.activeOrder.id} • ${store.activeOrder.bagQr}</h4>
+            </div>
+            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded">Plant Station #2</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 bg-slate-50 rounded-xl">
+              <span class="text-[10px] text-slate-400 block">Customer Count</span>
+              <span class="font-bold text-sm text-slate-800">${store.activeOrder.clothCount} Garments</span>
+            </div>
+            <div class="p-2.5 bg-slate-50 rounded-xl">
+              <span class="text-[10px] text-slate-400 block">Recount by Operator</span>
+              <div class="flex items-center gap-1 mt-0.5">
+                <input type="number" id="laundryOperatorCount" value="${store.activeOrder.verifiedCount}" class="w-12 text-center font-bold text-sm bg-white border border-slate-300 rounded p-0.5" />
+                <span class="text-[10px] text-slate-500">pcs</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-xs"></i>
+            <span class="text-[11px]">Check for cufflinks, jewelry, or delicate silk labels before dispatching to washing tumblers.</span>
+          </div>
+
+          <button onclick="confirmLaundryInwardCount()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Verify Garment Count & Move to Ironing</span>
+          </button>
+        `;
+        container.appendChild(card);
+      } else {
+        // Processing stages
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3';
+        card.innerHTML = `
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+            <div>
+              <h4 class="font-bold text-xs text-slate-900">Garment Processing Stages</h4>
+              <p class="text-[10px] text-slate-500">Current Order: ${store.activeOrder.id}</p>
+            </div>
+            <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded">Active</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <span class="font-semibold text-slate-700"><i class="fa-solid fa-jug-detergent text-teal-500 mr-1.5"></i> 1. Washing & Softener</span>
+              <span class="text-[10px] font-bold text-emerald-600">Completed</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-teal-50 rounded-xl border border-teal-200 text-xs">
+              <span class="font-bold text-teal-900"><i class="fa-solid fa-fire text-amber-500 mr-1.5"></i> 2. Steam Ironing & Pressing</span>
+              <button onclick="transitionLaundryToReady()" class="px-2.5 py-1 bg-teal-600 text-white rounded-lg text-[10px] font-bold hover:bg-teal-700">
+                Mark Ironed
+              </button>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <span class="font-semibold text-slate-700"><i class="fa-solid fa-shield text-indigo-500 mr-1.5"></i> 3. QA Inspection</span>
+              <span class="text-[10px] text-slate-400">Pending</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <span class="font-semibold text-slate-700"><i class="fa-solid fa-box text-slate-500 mr-1.5"></i> 4. Bag Packed & Sealed</span>
+              <span class="text-[10px] text-slate-400">Ready</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function confirmLaundryInwardCount() {
+      const countInput = document.getElementById('laundryOperatorCount');
+      if (countInput) {
+        store.activeOrder.verifiedCount = parseInt(countInput.value) || store.activeOrder.clothCount;
+      }
+      store.activeOrder.statusStep = 4; // Steam Ironing
+      renderCustomerTrackingTimeline();
+      updateDashboardProgress();
+      switchLaundryStage('processing');
+      showToast(`Inward Verified (${store.activeOrder.verifiedCount} items). Sent to Ironing.`);
+    }
+
+    function transitionLaundryToReady() {
+      store.activeOrder.statusStep = 5; // Ready for dispatch
+      renderCustomerTrackingTimeline();
+      updateDashboardProgress();
+      showToast('Ironing Complete! Garments packed in delivery bag.');
+      switchRole('delivery');
+      switchDeliveryQueue('dropoff');
+    }
+
+    /* ========================================================
+       ROLE 4: WEB ADMIN PANEL
+       ======================================================== */
+    function renderAdminDashboard() {
+      const ordersContainer = document.getElementById('adminOrdersTable');
+      if (!ordersContainer) return;
+      ordersContainer.innerHTML = '';
+
+      const orders = [
+        { id: store.activeOrder.id, cust: store.activeOrder.customerName, items: store.activeOrder.clothCount, bag: store.activeOrder.bagQr, status: store.lifecycleSteps[store.activeOrder.statusStep].title },
+        { id: '#BK-9310', cust: 'David Henderson', items: 10, bag: '#BAG-7412', status: 'Delivered' },
+        { id: '#BK-9308', cust: 'Elena Rostova', items: 18, bag: '#BAG-6631', status: 'Washing Bay' }
+      ];
+
+      orders.forEach(ord => {
+        const row = document.createElement('div');
+        row.className = 'p-2.5 bg-slate-50 rounded-xl text-xs flex items-center justify-between';
+        row.innerHTML = `
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-mono font-bold text-slate-800">${ord.id}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${ord.bag}</span>
+            </div>
+            <p class="text-[10px] text-slate-500">${ord.cust} • ${ord.items} Garments</p>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${ord.status === 'Delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-teal-100 text-teal-800'}">
+            ${ord.status}
+          </span>
+        `;
+        ordersContainer.appendChild(row);
+      });
+    }
+
+    /* ========================================================
+       QR SCANNER SIMULATION MODAL
+       ======================================================== */
+    function openQrScannerModal() {
+      document.getElementById('modal-qrScanner').classList.remove('hidden');
+      playBeep(520);
+    }
+
+    function closeQrScannerModal() {
+      document.getElementById('modal-qrScanner').classList.add('hidden');
+    }
+
+    function executeQrScanSuccess() {
+      playBeep(1200, 'sine', 0.2);
+      closeQrScannerModal();
+
+      store.activeOrder.statusStep = 2; // Bag Picked Up & Scanned
+      store.activeOrder.bagQr = '#BAG-8821';
+
+      renderCustomerTrackingTimeline();
+      updateDashboardProgress();
+      renderDeliveryJobs();
+
+      showToast('QR Code Scanned! Bag #BAG-8821 custody logged.');
+    }
+
+    function showCustomerBagQrModal() {
+      document.getElementById('modal-custBagQr').classList.remove('hidden');
+    }
+
+    function closeCustomerBagQrModal() {
+      document.getElementById('modal-custBagQr').classList.add('hidden');
+    }
+
+    /* ========================================================
+       SIGNATURE CANVAS SIMULATION
+       ======================================================== */
+    let sigCanvas, sigCtx, isDrawing = false;
+
+    function initSignatureCanvas() {
+      sigCanvas = document.getElementById('sigCanvas');
+      if (!sigCanvas) return;
+      sigCtx = sigCanvas.getContext('2d');
+
+      // Adjust dimensions
+      sigCanvas.width = sigCanvas.offsetWidth || 300;
+      sigCanvas.height = sigCanvas.offsetHeight || 170;
+
+      sigCtx.lineWidth = 2.5;
+      sigCtx.lineCap = 'round';
+      sigCtx.strokeStyle = '#0f172a';
+
+      // Mouse events
+      sigCanvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        sigCtx.beginPath();
+        sigCtx.moveTo(e.offsetX, e.offsetY);
+      });
+      sigCanvas.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        sigCtx.lineTo(e.offsetX, e.offsetY);
+        sigCtx.stroke();
+      });
+      window.addEventListener('mouseup', () => isDrawing = false);
+
+      // Touch events
+      sigCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isDrawing = true;
+        const rect = sigCanvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        sigCtx.beginPath();
+        sigCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      });
+      sigCanvas.addEventListener('touchmove', (e) => {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const rect = sigCanvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        sigCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        sigCtx.stroke();
+      });
+      sigCanvas.addEventListener('touchend', () => isDrawing = false);
+    }
+
+    function openSignatureModal() {
+      document.getElementById('modal-signature').classList.remove('hidden');
+      setTimeout(initSignatureCanvas, 100);
+    }
+
+    function clearSignatureCanvas() {
+      if (sigCtx && sigCanvas) {
+        sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+      }
+    }
+
+    function confirmDeliveryWithSignature() {
+      document.getElementById('modal-signature').classList.add('hidden');
+      store.activeOrder.statusStep = 7; // Delivered!
+      
+      renderCustomerTrackingTimeline();
+      updateDashboardProgress();
+      renderDeliveryJobs();
+      renderAdminDashboard();
+
+      showToast('Delivery Confirmed! Signature recorded.');
+    }
+
+    /* ========================================================
+       SUPPORT & EXTERNAL ACTIONS
+       ======================================================== */
+    function openSupportModal() {
+      showToast('Call Center Direct Line: +91 77426 55766');
+    }
+
+    function callSupportPhone() {
+      showToast('Calling driver Rajesh K. (+44 7700 900077)...');
+    }
+
+    /* ========================================================
+       APK & PWA DOWNLOAD PACKAGE GENERATOR
+       ======================================================== */
+    function openApkModal() {
+      document.getElementById('modal-apkDownload').classList.remove('hidden');
+    }
+
+    function closeApkModal() {
+      document.getElementById('modal-apkDownload').classList.add('hidden');
+    }
+
+    function downloadManifestFile() {
+      const manifest = {
+        name: "BIZNISKING Laundry & Ironing",
+        short_name: "BiznisKing",
+        start_url: "./index.html",
+        display: "standalone",
+        background_color: "#0f172a",
+        theme_color: "#0d9488",
+        description: "Laundry subscriptions, pickup logistics, garment processing and delivery tracking.",
+        icons: [
+          {
+            src: "https://placehold.co/192x192/0d9488/ffffff?text=BK",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "https://placehold.co/512x512/0d9488/ffffff?text=BIZNISKING",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      };
+      
+      const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "manifest.webmanifest";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('manifest.webmanifest saved! Ready for Android Studio / TWA.');
+    }
+
+    function downloadHtmlFile() {
+      const htmlContent = document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "BiznisKing_Laundry_App.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Offline App HTML file saved for Android loading!');
+    }
+  </script>
+</body>
+</html>
